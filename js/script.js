@@ -68,13 +68,54 @@ let lastOperator;
 let calcEnabled = false; // calculation on multiple operators clicked
 let calcAfterFirst = false;
 let displayReset = false;
+let displayText;
 let buferEdit = true;
+let dotEnabled = true;
+let afterDot = false;
+let afterDotNumber = false;
+
+function afterDotFirst(){
+    let number = parseFloat(event.target.textContent);
+    displayValue *= 10;
+    displayValue += number;
+    displayValue /= 10;
+    display.textContent = displayValue;
+    if(calcAfterFirst){   // ukljucuje se racunanje kad se unese broj(samo se prvi put preskoci jer nema desnog opreatora)
+        calcEnabled = true; 
+    }
+    nextNumber = false; 
+    buferEdit = true; 
+    afterDot = false;  
+    afterDotNumber = true;
+}
+function afterDotInsert(){
+    display.textContent += event.target.textContent;
+    displayValue = parseFloat(display.textContent);
+}
 
 function insertNumber(event){
     if(insert == true){    // insert numbers to display enable
         if(displayReset){   // ako treba da resetujem bafer
             displayValue = 0;
             displayReset = false;
+        }
+        if(event.target.textContent == '.' && dotEnabled){
+            displayText = display.textContent;
+            displayText += '.';
+            display.textContent = displayText;
+            dotEnabled = false;
+            afterDot = true;
+            return;
+        }else if(event.target.textContent == '.'){
+            return;
+        }
+        if(afterDot){
+            afterDotFirst();
+            return;
+        }
+        if(afterDotNumber){
+            afterDotInsert();
+            return;
         }
         let number = parseFloat(event.target.textContent);
         displayValue *= 10;
@@ -83,8 +124,8 @@ function insertNumber(event){
         if(calcAfterFirst){   // ukljucuje se racunanje kad se unese broj(samo se prvi put preskoci jer nema desnog opreatora)
             calcEnabled = true; 
         }
-        nextNumber = false;
-        buferEdit = true;
+        nextNumber = false; 
+        buferEdit = true;  // mogu da prisem bafer
     }
     
 }
@@ -100,7 +141,10 @@ function storeOperator(event){
     
     insert = true;
     calcAfterFirst = true;
-    buferEdit = true;
+    buferEdit = true; 
+    afterDot = false;  
+    afterDotNumber = false;
+    dotEnabled = true;
     
     if(!severalOperations){
         lastOperator = operator;
@@ -202,6 +246,9 @@ function storeOperator(event){
 
 function calculate(event){  
     buferEdit = false;
+    dotEnabled = true;
+    afterDot = false;  
+    afterDotNumber = false;
     if(leftOperand == undefined && rightOperand == undefined){
         return;
     }
@@ -251,6 +298,9 @@ function clearCalculator(event){
     calcAfterFirst = false;
     displayReset = false;
     display.textContent = result;
+    dotEnabled = true;
+    afterDot = false;
+    afterDotNumber = false;
 }
 
 function clearBufer(event){
@@ -258,6 +308,9 @@ function clearBufer(event){
         displayValue = 0;
         display.textContent = displayValue;
     }
+    dotEnabled = true;
+    afterDot = false;
+    afterDotNumber = false;
 
 }
 
