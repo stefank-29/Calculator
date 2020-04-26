@@ -1,7 +1,12 @@
+html, body{
+    height: 100vh;
+    width: 100vw;
+}
+
 #calculator{
     display: flex;
     flex-direction: column;
-    margin: 200px auto;
+    margin: 100px auto;
     width: 360px;
     height: auto;
     background-color: blue;
@@ -9,7 +14,6 @@
     border-radius: 10px;
     
 }
-
 
 #buttons {
     display: grid;
@@ -32,9 +36,7 @@
 
 #display{
     width: auto;
-    
-
-    
+ 
 }
 #display p{
     text-align: right;
