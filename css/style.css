@@ -1,6 +1,7 @@
 html, body{
     height: 100vh;
     width: 100vw;
+    overflow: hidden;
 }
 
 #calculator{
@@ -35,16 +36,20 @@ html, body{
 
 
 #display{
-    width: auto;
- 
+    width: 90% ;
+    margin: auto;
+    
 }
 #display p{
     text-align: right;
     vertical-align: middle;
-    line-height: 80px;
-    padding-right: 30px; 
+    line-height: 100px;
+    padding-right: 10px;
     font-size: 30px;
     margin-top: 20px;
+    border-radius: 5px;
+    background-color: azure;
+
     
 }
 #clear{

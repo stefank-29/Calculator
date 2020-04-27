@@ -56,10 +56,14 @@ numbers.forEach(number => number.addEventListener('click', insertNumber));
 const operators = Array.from(document.querySelectorAll(".operator"));
 operators.forEach(operator => operator.addEventListener('click', storeOperator))
 //operators.forEach(operator => operator.addEventListener('click', insertOperator))
+// clear
 const clear = document.querySelector("#clear");
 clear.addEventListener('click', clearCalculator);
 const clearEntry = document.querySelector("#clearEntry");
 clearEntry.addEventListener('click', clearBufer);
+// backspace
+const backspace = document.querySelector("#backspace");
+backspace.addEventListener('click', undo);
 
 
 let insert = true;
@@ -73,13 +77,19 @@ let buferEdit = true;
 let dotEnabled = true;
 let afterDot = false;
 let afterDotNumber = false;
+let enableBackspace = true;
 
-function afterDotFirst(){
+function afterDotFirst(input){
     let number = parseFloat(event.target.textContent);
-    displayValue *= 10;
-    displayValue += number;
-    displayValue /= 10;
-    display.textContent = displayValue;
+    if(number == 0){
+        display.textContent += '0';
+    }else{
+        displayValue *= 10;
+        displayValue += number;
+        displayValue /= 10;
+        display.textContent = displayValue;
+    }
+    
     if(calcAfterFirst){   // ukljucuje se racunanje kad se unese broj(samo se prvi put preskoci jer nema desnog opreatora)
         calcEnabled = true; 
     }
@@ -88,19 +98,28 @@ function afterDotFirst(){
     afterDot = false;  
     afterDotNumber = true;
 }
-function afterDotInsert(){
-    display.textContent += event.target.textContent;
+function afterDotInsert(input){
+    if(input == undefined){
+        display.textContent += event.target.textContent;
+    }
+    else{
+        display.textContent += input;
+    }
     displayValue = parseFloat(display.textContent);
 }
 
-function insertNumber(event){
-    if(insert == true){    // insert numbers to display enable
+function insertNumber(input){
+    if(insert){    // insert numbers to display enable
         if(displayReset){   // ako treba da resetujem bafer
             displayValue = 0;
             displayReset = false;
         }
-        if(event.target.textContent == '.' && dotEnabled){
+        
+        if((event.target.textContent == '.'|| input == '.') && dotEnabled){
             displayText = display.textContent;
+            if(displayText.includes(".")){
+                return;
+            }
             displayText += '.';
             display.textContent = displayText;
             dotEnabled = false;
@@ -117,7 +136,12 @@ function insertNumber(event){
             afterDotInsert();
             return;
         }
-        let number = parseFloat(event.target.textContent);
+        let number;
+        if(input != undefined){
+            number = parseFloat(input);
+        }else{
+            number = parseFloat(event.target.textContent);
+        }
         displayValue *= 10;
         displayValue += number;
         display.textContent = displayValue;
@@ -126,30 +150,30 @@ function insertNumber(event){
         }
         nextNumber = false; 
         buferEdit = true;  // mogu da prisem bafer
+        dotEnabled = true;  
+        enableBackspace = true;
     }
     
 }
-/*function insertOperator(event){
-    if(insert == true){    // insert numbers to display enable
-        displayValue += operator;
-        display.textContent = displayValue;
-    }
-}
-*/
 
-function storeOperator(event){
-    
+function storeOperator(event, input){
+
     insert = true;
     calcAfterFirst = true;
     buferEdit = true; 
     afterDot = false;  
     afterDotNumber = false;
-    dotEnabled = true;
-    
+    dotEnabled = false;
+    enableBackspace = false;
+
     if(!severalOperations){
         lastOperator = operator;
     }
-    operator = event.target.textContent;
+    if(input != undefined){
+        operator = input;
+    }else{
+        operator = event.target.textContent;
+    }
     if((lastOperator == '+' || lastOperator == '-') && (operator == 'x' || operator == '/')){
         
         if(calcEnabled){    
@@ -229,7 +253,7 @@ function storeOperator(event){
         }
     }
     //calcEnabled = true; 
-    if(clean == true){  // kad mi je sve obrisano prvi put u levi operand stavim dispVal inace samo displayValue stavim na 0
+    if(clean){  // kad mi je sve obrisano prvi put u levi operand stavim dispVal inace samo displayValue stavim na 0
         leftOperand = parseFloat(displayValue);
         //displayValue = 0;
         displayReset = true;
@@ -240,15 +264,14 @@ function storeOperator(event){
         displayReset = true;
         
     }
-   
- ///// dodati klasu za hajlajtovanje dugmeta
 }
 
 function calculate(event){  
     buferEdit = false;
-    dotEnabled = true;
+    dotEnabled = false;
     afterDot = false;  
     afterDotNumber = false;
+    enableBackspace = false;
     if(leftOperand == undefined && rightOperand == undefined){
         return;
     }
@@ -319,3 +342,66 @@ function divideZero(){
     display.textContent = "Error";
     return;
 }
+let bufer;
+let baferNum;
+
+function undo(){
+    bufer = display.textContent;
+    if (!enableBackspace){
+        return;
+    }
+    if(!bufer.includes(".") && dotEnabled){  // kada nije dozvoljena tacka nije ni brisanje(posle = ili nekog operatora)
+        buferNum = parseFloat(bufer);
+        buferNum /= 10;
+        buferNum = Math.floor(buferNum);
+        display.textContent = buferNum;
+        displayValue = buferNum;
+
+        return;
+    }else {
+        if(bufer.slice(-1) == '.'){
+            dotEnabled = true;
+            afterDot = false;
+            afterDotNumber = false;
+        }
+        bufer = bufer.slice(0, -1);
+        buferNum = parseFloat(bufer);
+        display.textContent = bufer;
+        displayValue = buferNum;
+        return;
+    }
+}
+
+
+document.addEventListener('keydown', () =>{
+    console.log(event.key);
+    switch (event.key) {
+        case "Enter":
+            calculate();
+            break;
+        case "Backspace":
+            undo();
+            break;
+        case "*":
+            storeOperator(event, 'x');
+            break;
+        case "/":
+            storeOperator(event, '/');
+            break;
+        case "+":
+            storeOperator(event, '+');
+            break;
+        case "-":
+            storeOperator(event, '-');
+            break;
+        case "c":
+            clearCalculator();
+            break;
+        default:
+            if(isFinite(event.key) && event.key != " "){
+            insertNumber(event.key);
+            }
+            break;
+    }
+   
+});
