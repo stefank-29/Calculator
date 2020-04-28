@@ -80,7 +80,13 @@ let afterDotNumber = false;
 let enableBackspace = true;
 
 function afterDotFirst(input){
-    let number = parseFloat(event.target.textContent);
+    let number;
+    if(input == undefined){
+        number = parseFloat(event.target.textContent);
+    }else{
+        number = parseFloat(input);
+    }
+   
     if(number == 0){
         display.textContent += '0';
     }else{
@@ -108,13 +114,18 @@ function afterDotInsert(input){
     displayValue = parseFloat(display.textContent);
 }
 
-function insertNumber(input){
+function insertNumber(event, input){
     if(insert){    // insert numbers to display enable
         if(displayReset){   // ako treba da resetujem bafer
             displayValue = 0;
             displayReset = false;
         }
-        
+        /*let dot;
+        if(input == undefined){
+            dot = event.target.textContent;
+        }else{
+            dot = input;
+        }*/
         if((event.target.textContent == '.'|| input == '.') && dotEnabled){
             displayText = display.textContent;
             if(displayText.includes(".")){
@@ -129,11 +140,11 @@ function insertNumber(input){
             return;
         }
         if(afterDot){
-            afterDotFirst();
+            afterDotFirst(input);  // prvi broj posle tacke
             return;
         }
         if(afterDotNumber){
-            afterDotInsert();
+            afterDotInsert(input);  // ostali brojevi posle tacke
             return;
         }
         let number;
@@ -374,7 +385,7 @@ function undo(){
 
 
 document.addEventListener('keydown', () =>{
-    console.log(event.key);
+    //console.log(event.key);
     switch (event.key) {
         case "Enter":
             calculate();
@@ -397,9 +408,12 @@ document.addEventListener('keydown', () =>{
         case "c":
             clearCalculator();
             break;
+        case ".":
+            insertNumber(event, event.key);
+            break;
         default:
             if(isFinite(event.key) && event.key != " "){
-            insertNumber(event.key);
+                insertNumber(event, event.key);
             }
             break;
     }
