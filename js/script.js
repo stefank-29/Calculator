@@ -115,6 +115,7 @@ function afterDotInsert(input){
 }
 
 function insertNumber(event, input){
+    removeHighlight();
     if(insert){ // insert numbers to display enable
         if(display.textContent.length > 12 && !displayReset){
             return;
@@ -173,7 +174,6 @@ function insertNumber(event, input){
 }
 
 function storeOperator(event, input){
-
     insert = true;
     calcAfterFirst = true;
     buferEdit = true; 
@@ -182,19 +182,28 @@ function storeOperator(event, input){
     dotEnabled = false;
     enableBackspace = false;
 
+
     if(!severalOperations){
         lastOperator = operator;
     }
     if(input != undefined){
         operator = input;
+        if(input == 'x')
+            input = '×';
+        else if(input == '/')
+            input = '÷';
+        removeHighlight();
+        addHighlight(input);
     }else{
         if(event.target.textContent == '×'){
-            operator = 'x';
+            operator = 'x'; 
         }else if(event.target.textContent == '÷'){
             operator = '/';
         }else{
             operator = event.target.textContent;
         }
+        removeHighlight();
+        event.target.classList.add("highlightOperator");
     }
     if((lastOperator == '+' || lastOperator == '-') && (operator == 'x' || operator == '/')){
         
@@ -294,6 +303,7 @@ function calculate(event){
     afterDot = false;  
     afterDotNumber = false;
     enableBackspace = false;
+    removeHighlight();
     if(leftOperand == undefined && rightOperand == undefined){
         return;
     }
@@ -346,6 +356,7 @@ function clearCalculator(event){
     dotEnabled = true;
     afterDot = false;
     afterDotNumber = false;
+    removeHighlight();
 }
 
 function clearBufer(event){
@@ -430,3 +441,16 @@ document.addEventListener('keydown', () =>{
     }
    
 });
+
+function removeHighlight(){
+    operators.forEach(operator => {
+        operator.classList.remove("highlightOperator");
+    });
+}
+function addHighlight(input){
+    operators.forEach(operator => {
+        if(operator.textContent == input){
+            operator.classList.add("highlightOperator");
+        }
+    });
+}
