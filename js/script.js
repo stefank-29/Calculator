@@ -115,18 +115,23 @@ function afterDotInsert(input){
 }
 
 function insertNumber(event, input){
-    if(insert){    // insert numbers to display enable
+    if(insert){ // insert numbers to display enable
+        if(display.textContent.length > 12 && !displayReset){
+            return;
+        }   
         if(displayReset){   // ako treba da resetujem bafer
             displayValue = 0;
             displayReset = false;
         }
-        /*let dot;
+        
+        let dot;
         if(input == undefined){
             dot = event.target.textContent;
         }else{
             dot = input;
-        }*/
-        if((event.target.textContent == '.'|| input == '.') && dotEnabled){
+        }
+        
+        if((dot == '.') && dotEnabled){
             displayText = display.textContent;
             if(displayText.includes(".")){
                 return;
@@ -136,7 +141,7 @@ function insertNumber(event, input){
             dotEnabled = false;
             afterDot = true;
             return;
-        }else if(event.target.textContent == '.'){
+        }else if(dot == '.'){
             return;
         }
         if(afterDot){
@@ -183,7 +188,13 @@ function storeOperator(event, input){
     if(input != undefined){
         operator = input;
     }else{
-        operator = event.target.textContent;
+        if(event.target.textContent == '×'){
+            operator = 'x';
+        }else if(event.target.textContent == '÷'){
+            operator = '/';
+        }else{
+            operator = event.target.textContent;
+        }
     }
     if((lastOperator == '+' || lastOperator == '-') && (operator == 'x' || operator == '/')){
         

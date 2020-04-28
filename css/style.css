@@ -1,7 +1,19 @@
-html, body{
+html{
+    height: 100%;
+    overflow: hidden;
+}
+
+
+body{
     height: 100vh;
     width: 100vw;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
 }
 
 #calculator{
@@ -10,10 +22,29 @@ html, body{
     margin: 100px auto;
     width: 360px;
     height: auto;
-    background-color: blue;
-    border: 1px solid blue;
+    background-color: #2853ff;
+    border: 2px solid #001f3f;
     border-radius: 10px;
+    box-shadow: 0px 0px 10px 3px rgb(236, 121, 86);
     
+}
+
+#display{
+    width: 90% ;
+    margin: auto;
+    
+}
+#display p{
+    text-align: right;
+    vertical-align: middle;
+    line-height: 100px;
+    padding-right: 10px;
+    font-size: 30px;
+    font-family: "Lato", sans-serif;
+    margin-top: 20px;
+    border-radius: 5px;
+    border: 5px groove rgb(11, 11, 144);
+    background-color: azure;
 }
 
 #buttons {
@@ -29,52 +60,70 @@ html, body{
     ;
     margin: 20px 10px;
     margin-top: 0px;
-    grid-gap: 4px;
+    grid-gap: 6px;
 }
 
-
-
-
-#display{
-    width: 90% ;
-    margin: auto;
-    
-}
-#display p{
-    text-align: right;
-    vertical-align: middle;
-    line-height: 100px;
-    padding-right: 10px;
-    font-size: 30px;
-    margin-top: 20px;
+#buttons button{
     border-radius: 5px;
-    background-color: azure;
-
+    border: 2px solid rgb(11, 11, 144);
+    font-size: 25px;
+    font-family: "Lato", sans-serif;
+    background-color: #f9c5bd;
+    outline: none;
     
 }
+
+#buttons button:active{
+    transform: translateY(3px);
+}
+
+
+
+#clear:hover, #clearEntry:hover, #backspace:hover, #div:hover, #mul:hover, #add:hover, #sub:hover, #equals:hover{
+    background-color: #fb9541 !important;  
+    box-shadow: 0px 0px 1px 1px #001f3f;
+}
+
+.number:hover{
+    background-color: #f8ada1 !important;
+    box-shadow: 0px 0px 1px 1px #001f3f;
+}
+
+
+
 #clear{
     grid-area: clear;
+    background-color:  #ff8928!important;
 }
-#clearEdit{
+
+#clearEntry{
     grid-area: clearEdit;
+    background-color:  #ff8928 !important;
 }
 #backspace{
     grid-area: backspace;
+    background-color:  #ff8928 !important;
+    
 }
 #div{
     grid-area: div;
+    background-color:  #ff8928 !important;
 }
 #mul{
     grid-area: mul;
+    background-color:  #ff8928 !important;
 }
 #add{
     grid-area: add;
+    background-color:  #ff8928 !important;
 }
 #sub{
     grid-area: sub;
+    background-color:  #ff8928 !important;
 }
 #equals{
     grid-area: equals;
+    background-color:  #ff8928 !important;
 }
 #dot{
     grid-area: dot;
