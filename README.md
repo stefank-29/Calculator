@@ -10,3 +10,5 @@ An online Calculator built for assignment as part of the curriculum for the Web 
 * JavaScript
 * CSS3
 * HTML5
+* Git
+
